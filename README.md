@@ -37,7 +37,7 @@ Builve is a command-line tool designed to simplify Flutter build processes. It a
    ```
 
 ### Option 3: Download Precompiled Binaries
-Precompiled binaries for Linux, macOS, and Windows will be available in the [Releases](https://github.com/ragoose/builve/releases) section.
+Precompiled binaries for Linux, macOS, and Windows will be available in the [Releases](https://github.com/daveragos/builve/tree/main/release) section.
 
 ## Usage
 
