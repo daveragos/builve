@@ -4,7 +4,7 @@ version: 0.0.1
 homepage: https://github.com/ragoose/builve
 repository: https://github.com/ragoose/builve
 environment:
-  sdk: ^3.7.2
+  sdk: ">=3.0.0"
 
 # Add regular dependencies here.
 dependencies:
