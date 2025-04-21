@@ -66,9 +66,12 @@ Future<void> main(List<String> arguments) async {
     // Determine project path and destination.
     final String projectPath =
         results['project-path'] as String? ?? Directory.current.path;
-    final String destination =
+    final String destination = 
         results['destination'] as String? ??
-        path.join(Platform.environment['HOME']!, 'Downloads');
+        path.join(
+            Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']!,
+            'Downloads',
+        );
     final String buildType = results['build-type'] as String;
 
     // Check if the project path is a Flutter project.
@@ -94,6 +97,7 @@ Future<void> main(List<String> arguments) async {
       buildCommand.first,
       buildCommand.sublist(1),
       workingDirectory: projectPath,
+      runInShell: true,
     );
 
     if (buildResult.exitCode != 0) {
