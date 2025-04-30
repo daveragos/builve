@@ -21,7 +21,7 @@ Builve is a command-line tool designed to simplify Flutter build processes. It a
 ### Option 2: Clone the Repository
 1. Clone the repository:
    ```bash
-   git clone https://github.com/ragoose/builve.git
+   git clone https://github.com/daveragos/builve.git
    ```
 2. Navigate to the project directory:
    ```bash
