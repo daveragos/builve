@@ -1,0 +1,65 @@
+name: Release Versioning
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event_name == 'push') || 
+      (github.event.pull_request.merged == true)
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install Dependencies
+        run: dart pub get
+
+      - name: Determine Version Bump
+        id: determine_bump
+        run: |
+          # Default to patch bump
+          BUMP_TYPE="patch"
+          
+          # Check PR labels (if PR exists)
+          if [[ "${{ github.event.pull_request.labels }}" == *"major"* ]]; then
+            BUMP_TYPE="major"
+          elif [[ "${{ github.event.pull_request.labels }}" == *"minor"* ]]; then
+            BUMP_TYPE="minor"
+          fi
+
+          # Check commit message (if push event)
+          LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$LAST_COMMIT_MSG" == *"#major"* ]]; then
+            BUMP_TYPE="major"
+          elif [[ "$LAST_COMMIT_MSG" == *"#minor"* ]]; then
+            BUMP_TYPE="minor"
+          fi
+
+          echo "Determined bump type: $BUMP_TYPE"
+          echo "::set-output name=version_type::$BUMP_TYPE"
+
+      - name: Bump Version
+        run: |
+          dart pub global activate pubspec_version
+          pubspec_version bump ${{ steps.determine_bump.outputs.version_type }}
+
+      - name: Commit and Push Version Update
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add pubspec.yaml
+          git commit -m "Bump version [skip ci]"
+          git push
