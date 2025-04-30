@@ -1,4 +1,4 @@
-name: Release Versioning
+name: Auto Version Bump
 
 on:
   push:
@@ -27,6 +27,9 @@ jobs:
       - name: Install Dependencies
         run: dart pub get
 
+      - name: Install Cider Globally
+        run: dart pub global activate cider
+
       - name: Determine Version Bump
         id: determine_bump
         run: |
@@ -48,13 +51,11 @@ jobs:
             BUMP_TYPE="minor"
           fi
 
-          echo "Determined bump type: $BUMP_TYPE"
-          echo "::set-output name=version_type::$BUMP_TYPE"
+          echo "version_type=$BUMP_TYPE" >> $GITHUB_ENV
 
       - name: Bump Version
         run: |
-          dart pub global activate pubspec_version
-          pubspec_version bump ${{ steps.determine_bump.outputs.version_type }}
+          dart pub global run cider bump ${{ env.version_type }}
 
       - name: Commit and Push Version Update
         run: |
