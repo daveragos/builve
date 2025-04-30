@@ -64,3 +64,5 @@ jobs:
           git add pubspec.yaml
           git commit -m "Bump version [skip ci]"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
