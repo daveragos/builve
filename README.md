@@ -10,15 +10,7 @@ Builve is a command-line tool designed to simplify Flutter build processes. It a
 
 ## Installation
 
-### Option 1: Install via Dart's `pub global activate`
-1. Ensure you have Dart installed on your system.
-2. Run the following command:
-   ```bash
-   dart pub global activate builve
-   ```
-3. Add Dart's global bin directory to your PATH if not already done.
-
-### Option 2: Clone the Repository
+### Option 1: Install and Run from Source
 1. Clone the repository:
    ```bash
    git clone https://github.com/daveragos/builve.git
@@ -31,12 +23,13 @@ Builve is a command-line tool designed to simplify Flutter build processes. It a
    ```bash
    dart pub get
    ```
-4. Run the CLI:
+4. Activate the CLI globally: 
    ```bash
-   dart bin/builve.dart
+   dart pub global activate --source path .
    ```
+5. Add Dart's global bin directory to your PATH if not already done.
 
-### Option 3: Download Precompiled Binaries
+### Option 2: Download Precompiled Binaries
 Precompiled binaries for Linux, macOS, and Windows will be available in the [Releases](https://github.com/daveragos/builve/tree/main/release) section.
 
 ## Usage
