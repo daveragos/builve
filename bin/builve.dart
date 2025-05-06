@@ -39,11 +39,16 @@ ArgParser buildParser() {
       allowed: ['apk', 'appbundle', 'apk-split'],
       help:
           'Type of Flutter build (apk, appbundle, apk-split). Defaults to apk.',
+    )
+    ..addOption(
+      'repo-url',
+      abbr: 'r',
+      help: 'GitHub repository URL of the Flutter project to build.',
     );
 }
 
 void printUsage(ArgParser argParser) {
-  print('Usage: dart builve.dart <flags> [arguments]');
+  print('Usage: builve <flags> [arguments]');
   print(argParser.usage);
 }
 
@@ -63,22 +68,52 @@ Future<void> main(List<String> arguments) async {
       return;
     }
 
-    // Determine project path and destination.
-    final String projectPath =
+    // Determine if repo-url is provided
+    final String? repoUrl = results['repo-url'] as String?;
+    String projectPath =
         results['project-path'] as String? ?? Directory.current.path;
-    final String destination = 
-        results['destination'] as String? ??
-        path.join(
-            Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']!,
-            'Downloads',
-        );
+    Directory? tempDir;
+    if (repoUrl != null && repoUrl.isNotEmpty) {
+      // Create a temp directory
+      tempDir = await Directory.systemTemp.createTemp('builve_repo_');
+      print('Cloning $repoUrl into ${tempDir.path} ...');
+      final cloneResult =
+          await Process.run('git', ['clone', repoUrl, tempDir.path]);
+      if (cloneResult.exitCode != 0) {
+        print('Error: Failed to clone repository.');
+        print(cloneResult.stderr);
+        return;
+      }
+      projectPath = tempDir.path;
+    }
+
+    final String destination = results['destination'] as String? ??
+        path.join(Platform.environment['HOME']!, 'Downloads');
     final String buildType = results['build-type'] as String;
 
     // Check if the project path is a Flutter project.
     final File pubspecFile = File(path.join(projectPath, 'pubspec.yaml'));
     if (!pubspecFile.existsSync()) {
       print('Error: The specified project path is not a Flutter project.');
+      if (tempDir != null) await tempDir.delete(recursive: true);
       return;
+    }
+
+    // Run flutter pub get before building
+    print('Running flutter pub get...');
+    final pubGetResult = await Process.run(
+      'flutter',
+      ['pub', 'get'],
+      workingDirectory: projectPath,
+    );
+    if (pubGetResult.exitCode != 0) {
+      print('Error: Failed to run flutter pub get.');
+      print(pubGetResult.stderr);
+      if (tempDir != null) await tempDir.delete(recursive: true);
+      return;
+    }
+    if (verbose) {
+      print(pubGetResult.stdout);
     }
 
     // Determine the Flutter build command.
@@ -103,11 +138,17 @@ Future<void> main(List<String> arguments) async {
     if (buildResult.exitCode != 0) {
       print('Error: Failed to build $buildType.');
       print(buildResult.stderr);
+      if (tempDir != null) await tempDir.delete(recursive: true);
       return;
     }
 
     if (verbose) {
       print(buildResult.stdout);
+    }
+    // Clean up temp directory if used
+    if (tempDir != null) {
+      print('Cleaning up temporary directory...');
+      await tempDir.delete(recursive: true);
     }
 
     // Locate and move the generated build output.
@@ -121,10 +162,9 @@ Future<void> main(List<String> arguments) async {
         return;
       }
 
-      final List<FileSystemEntity> apkFiles =
-          apkDir.listSync().where((file) {
-            return file is File && file.path.endsWith('.apk');
-          }).toList();
+      final List<FileSystemEntity> apkFiles = apkDir.listSync().where((file) {
+        return file is File && file.path.endsWith('.apk');
+      }).toList();
 
       if (apkFiles.isEmpty) {
         print('Error: No APK files found.');

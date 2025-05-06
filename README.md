@@ -34,38 +34,47 @@ Precompiled binaries for Linux, macOS, and Windows will be available in the [Rel
 
 ## Usage
 
+
 ### Basic Command
 ```bash
 builve --build-type <type> --project-path <path> --destination <path>
+builve --repo-url <github_repo_url> [other options]
 ```
 
 ### Options
-- `--build-type` (`-b`): Type of Flutter build. Options are:
+* `--build-type` (`-b`): Type of Flutter build. Options are:
   - `apk`: Build a single APK.
   - `appbundle`: Build an Android App Bundle.
   - `apk-split`: Build multiple APKs, one for each ABI.
-  
-- `--project-path` (`-p`): Path to the Flutter project. Defaults to the current directory.
-- `--destination` (`-d`): Directory to move the build output. Defaults to the `Downloads` folder in the user's home directory.
-- `--verbose` (`-v`): Show additional command output.
-- `--help` (`-h`): Print usage information.
-- `--version`: Print the tool version.
+
+* `--project-path` (`-p`): Path to the Flutter project. Defaults to the current directory.
+* `--repo-url` (`-r`): GitHub repository URL of the Flutter project to build. If provided, the tool will clone the repo to a temporary directory and build from there.
+* `--destination` (`-d`): Directory to move the build output. Defaults to the `Downloads` folder in the user's home directory.
+* `--verbose` (`-v`): Show additional command output.
+* `--help` (`-h`): Print usage information.
+* `--version`: Print the tool version.
 
 ### Examples
 
-#### Build a Single APK
+
+#### Build a Single APK from a local project
 ```bash
 builve --build-type apk --project-path /path/to/flutter/project
 ```
 
-#### Build Split APKs
+#### Build Split APKs from a local project
 ```bash
 builve --build-type apk-split --project-path /path/to/flutter/project --destination /path/to/output
 ```
 
-#### Build an App Bundle
+#### Build an App Bundle from a local project
 ```bash
 builve --build-type appbundle --project-path /path/to/flutter/project
+```
+
+#### Build a Single APK from a GitHub repo
+```bash
+builve --build-type apk --repo-url https://github.com/username/repo
 ```
 
 ## Contributing
