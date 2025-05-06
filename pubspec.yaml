@@ -1,6 +1,6 @@
 name: builve
 description: A CLI tool to build Flutter APKs and move them to a specified directory.
-version: 0.0.2
+version: 0.1.0
 homepage: https://github.com/ragoose/builve
 repository: https://github.com/ragoose/builve
 environment:
