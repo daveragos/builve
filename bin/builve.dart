@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
 
-const String version = '0.0.1';
+const String version = '0.1.0';
 
 ArgParser buildParser() {
   return ArgParser()
