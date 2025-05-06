@@ -4,6 +4,7 @@ Builve is a command-line tool designed to simplify Flutter build processes. It a
 
 ## Features
 - Build Flutter projects as APK, App Bundle, or Split APKs.
+- Build directly from a GitHub repository URL.
 - Automatically rename and organize build outputs.
 - Specify custom project paths and output destinations.
 - Exclude debug APKs from the output.
