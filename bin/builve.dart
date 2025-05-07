@@ -87,8 +87,12 @@ Future<void> main(List<String> arguments) async {
       projectPath = tempDir.path;
     }
 
-    final String destination = results['destination'] as String? ??
-        path.join(Platform.environment['HOME']!, 'Downloads');
+    final String destination = 
+        results['destination'] as String? ??
+        path.join(
+            Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']!,
+            'Downloads',
+        );
     final String buildType = results['build-type'] as String;
 
     // Check if the project path is a Flutter project.
@@ -105,6 +109,7 @@ Future<void> main(List<String> arguments) async {
       'flutter',
       ['pub', 'get'],
       workingDirectory: projectPath,
+      runInShell: true
     );
     if (pubGetResult.exitCode != 0) {
       print('Error: Failed to run flutter pub get.');
