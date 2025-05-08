@@ -87,11 +87,10 @@ Future<void> main(List<String> arguments) async {
       projectPath = tempDir.path;
     }
 
-    final String destination = 
-        results['destination'] as String? ??
+    final String destination = results['destination'] as String? ??
         path.join(
-            Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']!,
-            'Downloads',
+          Platform.environment['HOME'] ?? Platform.environment['USERPROFILE']!,
+          'Downloads',
         );
     final String buildType = results['build-type'] as String;
 
@@ -105,12 +104,8 @@ Future<void> main(List<String> arguments) async {
 
     // Run flutter pub get before building
     print('Running flutter pub get...');
-    final pubGetResult = await Process.run(
-      'flutter',
-      ['pub', 'get'],
-      workingDirectory: projectPath,
-      runInShell: true
-    );
+    final pubGetResult = await Process.run('flutter', ['pub', 'get'],
+        workingDirectory: projectPath, runInShell: true);
     if (pubGetResult.exitCode != 0) {
       print('Error: Failed to run flutter pub get.');
       print(pubGetResult.stderr);
@@ -149,11 +144,6 @@ Future<void> main(List<String> arguments) async {
 
     if (verbose) {
       print(buildResult.stdout);
-    }
-    // Clean up temp directory if used
-    if (tempDir != null) {
-      print('Cleaning up temporary directory...');
-      await tempDir.delete(recursive: true);
     }
 
     // Locate and move the generated build output.
@@ -252,12 +242,21 @@ Future<void> main(List<String> arguments) async {
 
       print('App Bundle successfully built and moved to: $destinationPath');
     }
+    // Clean up temp directory if used
+    if (tempDir != null) {
+      print('Cleaning up temporary directory...');
+      await tempDir.delete(recursive: true);
+    }
   } on FormatException catch (e) {
-    // Print usage information if an invalid argument was provided.
     print(e.message);
     print('');
     printUsage(argParser);
   } on Exception catch (e) {
     print('Error: ${e.toString()}');
+  } on Error catch (e) {
+    print('Error: ${e.toString()}');
+  } catch (e) {
+    print('Error: ${e.toString()}');
   }
+  exit(0);
 }
